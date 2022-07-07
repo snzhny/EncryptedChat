@@ -30,14 +30,17 @@ finally:
     def escape():
         while True:
             if keyboard.is_pressed('Esc'):
-                client_socket.close()
+                stop = True
 
     print("You joined")
     print("To escape of this chat press: ESC")
 
-    if "__name__" == "__main__":
+    if __name__ == "__main__":
+        stop = False
         Thread(target=escape).start()
         while True:
+            if stop:
+                client_socket.close()
             message = (client_socket.recv(1024)).decode()
             print(server_name, ">", message)
             message = input("me > ")
