@@ -13,22 +13,23 @@ except ModuleNotFoundError:
     modules = ["tor"]
     call("pip install " + ' '.join(modules), shell=True)
 finally:
-    server_socket = socket.socket()
+    sock = socket.socket()
     port = 8080
     server_host = socket.gethostname()
+
     server_ip = socket.gethostbyname(server_host)
+    print(server_ip)
     numberOfConnections = 2
 
-    server_socket.bind((server_host, port))
+    sock.bind((server_host, port))
 
     client_name = input("Enter your name: ")
-    server_socket.listen(numberOfConnections)
+    sock.listen(numberOfConnections)
 
-    conn, address = server_socket.accept()
-    print(f"Received connection from: {address[0]}")
+    conn, address = sock.accept()
 
     client = (conn.recv(1024)).decode()
-    print(client + ' has connected.')
+    print(f"{address[0]}({client}) has joined...")
     conn.send(client_name.encode())
 
     while True:
