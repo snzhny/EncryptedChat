@@ -1,6 +1,12 @@
-from cryptography.fernet import Fernet
-from random import randint
-import base64
+#!/usr/bin/python3
+try:
+    from cryptography.fernet import Fernet
+    from random import randint
+    import base64
+except ModuleNotFoundError:
+    from subprocess import call
+    modules = ["cryptography", "Fernet", "fernet", "base64"]
+    call("pip install " + ' '.join(modules), shell=True)
 
 #кодирование в Base64
 def intoBase64():
