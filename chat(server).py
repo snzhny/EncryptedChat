@@ -5,12 +5,12 @@ Server-side chat
 try:
     import socket
     import sys
-    import tor
     import time
+    import keyboard
 except ModuleNotFoundError:
     from subprocess import call
 
-    modules = ["tor"]
+    modules = ["keyboard"]
     call("pip install " + ' '.join(modules), shell=True)
 finally:
     sock = socket.socket()
@@ -31,7 +31,6 @@ finally:
     client = (conn.recv(1024)).decode()
     print(f"{address[0]}({client}) has joined...")
     conn.send(client_name.encode())
-
     while True:
         message = input("Me > ")
         conn.send(message.encode())  # we need to create a custom encode func
@@ -39,3 +38,6 @@ finally:
         message = message.decode()  # we need to create a custom decode func
 
         print(f"{client} > {message}")
+
+        if keyboard.is_pressed('esc'):
+            conn.close()
