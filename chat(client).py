@@ -5,31 +5,41 @@ Client-side chat
 try:
     import socket
     import sys
-    import tor
     import time
+    import keyboard
+    from threading import Thread
 except ModuleNotFoundError:
     from subprocess import call
-    modules = ["tor"]
+    modules = ["socket", "keyboard"]
     call("pip install " + ' '.join(modules), shell=True)
 finally:
-    server_socket = socket.socket()
+    client_socket = socket.socket()
     server_host = socket.gethostname()
     ip = socket.gethostbyname(server_host)
     server_port = 8080
 
-    server_host = input('Enter ip of server: ')
+    server_host = input('Enter ip of server: ').strip()
     name = input('Enter your name: ')
 
-    server_socket.connect((server_host, server_port))
+    client_socket.connect((server_host, server_port))
 
-    server_socket.send(name.encode())
-    server_name = server_socket.recv(1024)
+    client_socket.send(name.encode())
+    server_name = client_socket.recv(1024)
     server_name = server_name.decode()
 
-    print("You joined")
+    def escape():
+        if keyboard.is_pressed('Esc'):
+            client_socket.close()
 
-    while True:
-        message = (server_socket.recv(1024)).decode()
-        print(server_name, ">", message)
-        message = input("Me > ")
-        server_socket.send(message.encode())
+    print("You joined")
+    print("To escape of this chat press: ESC")
+
+    if "__name__" == "__main__":
+        while True:
+            message = (client_socket.recv(1024)).decode()
+            print(server_name, ">", message)
+            message = input("me > ")
+            client_socket.send(message.encode())
+
+    th = Thread(target=escape)
+    th.start()
