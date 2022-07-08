@@ -1,7 +1,7 @@
 '''
 могёт отправлять на сервер зашифрованные данные и имеет право на имя
 '''
-
+from random import randint, random
 from threading import Thread
 from keyboard import is_pressed as pressed
 # import encrypting
@@ -13,6 +13,7 @@ def send_message():
         message = input("me > ")
         if '!file' in message:
             client_socket.send(message.encode('utf-8'))#encrypting.intoBase64(message[5:]).encode('utf-8'))
+
         else:
             client_socket.send(message.encode('utf-8'))
 
@@ -22,19 +23,30 @@ def receive_message():
         data = client_socket.recv(1024).decode('utf-8')
         print(data)
 
+def receive_public_keys():
+    pass
 
 if __name__ == '__main__':
-    g = 5
-    n = 5
-    a = 4
-    ga = g ** a % n
-    key =1
+
     name = input('Enter your name: ')
     server_host = input('Enter ip of server: ')
     server_port = 8080
 
     client_socket = socket.socket()
     client_socket.connect((server_host, server_port))
+    g, p = (int(x) for x in (client_socket.recv(1024).decode('utf-8')).split())
+    a = randint(1, 10)
+    ga = (g ** a) % p
+
+
+    v = a+1
+    b = ""
+
+    key = ga ** b % p
+
+    print(g, p)
+    print(a)
+    print(ga)
     client_socket.send(name.encode('utf-8'))
     Thread(target=send_message).start()
     Thread(target=receive_message).start()
