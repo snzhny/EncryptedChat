@@ -20,12 +20,15 @@ def quit1():
         quit()
         call("exit")
 
+
 def resend(user):
     while flag:
         data = user.recv(1024)
         for use in users:
             if use != user:
-                use.send(names[user] + " > ".encode('utf-8') + data)  # отправляет всем юзерам, кроме того кто это отправил
+                use.send(
+                    names[user] + " > ".encode('utf-8') + data)  # отправляет всем юзерам, кроме того кто это отправил
+                # use.send(data_gb)
 
 
 def start_server():
@@ -33,6 +36,9 @@ def start_server():
         user_socket, address = sock.accept()
         print(f"User <{address[0]}> connected")
         user_socket.send(f"{g} {p}".encode())
+        data_gb = user_socket.recv(1024)
+        print(data_gb)  # udalit
+        user_socket.send(data_gb)
         names[user_socket] = user_socket.recv(256)  # имя пользователя
         users.append(user_socket)  # ip пользователя
         Thread(target=resend, args=(user_socket,)).start()
@@ -50,6 +56,7 @@ if __name__ == '__main__':
     sock.bind((server_host, port))
     g = randint(1, 10)
     p = randint(1, 10)
+    # data_gb = user.recv(1024)
     print(g, p)
     sock.listen(numberOfConnections)
     users = []
