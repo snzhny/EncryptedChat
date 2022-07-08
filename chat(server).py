@@ -1,43 +1,44 @@
-#!/usr/bin/python3
 """
-Server-side chat
+сервер принимает в себя отправлялки от клиента и отправляет их всем другим клиeнтам
 """
-try:
-    import socket
-    import sys
-    import time
-    import keyboard
-except ModuleNotFoundError:
-    from subprocess import call
 
-    modules = ["keyboard"]
-    call("pip install " + ' '.join(modules), shell=True)
-finally:
+from threading import Thread
+from keyboard import is_pressed as pressed
+import socket
+
+def quit():
+    while True:
+        if pressed('Esc'):
+            flag = False
+
+def resend(user):
+    while flag:
+        data = user.recv(1024)
+        print(data.decode())
+        for use in users:
+            if use != user:
+                use.send(names)
+                use.send(data)  # отправляет всем юзерам, кроме того кто это отправил
+
+def start_server():
+    while flag:
+        user_socket, address = sock.accept()
+        print(f"User <{address[0]}> connected")
+        names.append(user_socket.recv(256))  # имя пользователя
+        users.append(user_socket)  # ip пользователя
+        Thread(target=resend, args=(user_socket,)).start()
+
+if __name__ == '__main__':
     sock = socket.socket()
     port = 8080
     server_host = socket.gethostname()
-
     server_ip = socket.gethostbyname(server_host)
-    print(server_ip)
-    numberOfConnections = 2
+    print(f"IP of the server : {server_ip}")
 
+    numberOfConnections = 5
     sock.bind((server_host, port))
-
-    client_name = input("Enter your name: ")
     sock.listen(numberOfConnections)
-
-    conn, address = sock.accept()
-
-    client = (conn.recv(1024)).decode()
-    print(f"{address[0]}({client}) has joined...")
-    conn.send(client_name.encode())
-    while True:
-        message = input("Me > ")
-        conn.send(message.encode())  # we need to create a custom encode func
-        message = conn.recv(1024)  # message size: 1Kb
-        message = message.decode()  # we need to create a custom decode func
-
-        print(f"{client} > {message}")
-
-        if keyboard.is_pressed('esc'):
-            conn.close()
+    users = []
+    names = []
+    flag = True
+    start_server()

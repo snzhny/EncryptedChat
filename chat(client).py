@@ -1,39 +1,39 @@
-#!/usr/bin/python3
-"""
-Client-side chat
-"""
-try:
-    import socket
-    import sys
-    import time
-    import keyboard
-    from threading import Thread
-    from encrypt_and_decrypt import encrypt
-except ModuleNotFoundError:
-    from subprocess import call
-    modules = ["socket", "keyboard"]
-    call("pip install " + ' '.join(modules), shell=True)
-finally:
-    client_socket = socket.socket()
-    server_host = socket.gethostname()
-    ip = socket.gethostbyname(server_host)
+'''
+могёт отправлять на сервер зашифрованные данные и имеет право на имя
+'''
+
+from threading import Thread
+from keyboard import is_pressed as pressed
+# import encrypting
+import socket
+
+
+def send_message():
+    while True:
+        message = input("Введите текст или введите \"!file\" и путь к нему")
+        if '!file' in message:
+            client_socket.send(message.encode('utf-8')) #encrypting.intoBase64(message[5:]).encode('utf-8'))
+        else:
+            client_socket.send(message.encode('utf-8'))
+
+
+def receive_message():
+    while True:
+        data = client_socket.recv(1024).decode('utf-8')
+        print(data)
+
+
+if __name__ == '__main__':
+    g = 5
+    n = 5
+    a = 4
+    ga = g ** a % n
+    key = 1
+    name = input('Enter your name: ')
+    server_host = input('Enter ip of server: ')
     server_port = 8080
 
-    server_host = input('Enter ip of server: ').strip()
-    name = input('Enter your name: ')
-
+    client_socket = socket.socket()
     client_socket.connect((server_host, server_port))
-
-    client_socket.send(name.encode())
-    server_name = client_socket.recv(1024)
-    server_name = server_name.decode()
-
-    print("You joined")
-    print("To escape of this chat press: ESC")
-
-    if __name__ == "__main__":
-        while True:
-            message = (client_socket.recv(1024)).decode()
-            print(server_name, ">", message)
-            message = input("me > ")
-            client_socket.send(message.encode())
+    Thread(target=send_message).start()
+    Thread(target=receive_message).start()
