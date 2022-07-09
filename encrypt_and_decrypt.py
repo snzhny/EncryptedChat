@@ -6,12 +6,11 @@ try:
     import base64
 except ModuleNotFoundError:
     from subprocess import call
+
     modules = ["cryptography", "Fernet", "fernet", "base64"]
     call("pip install " + ' '.join(modules), shell=True)
 finally:
-    # base64 encryption
-
-
+    # # base64 encryption
     # def encryption(path, key):
     #     with open(path, 'rb') as file:
     #         file_encode_b64 = base64.b64encode(file.read())
@@ -31,26 +30,18 @@ finally:
     #         file.write(base64.b64decode(decrypted))
 
     # шифровка текста
-    def encryptText(message, key):
-        message_bytes = message.encode('utf-8')  # в utf-8 введённое сообщение
-        encoded_data = base64.b64encode(message_bytes)  # перевод в base64
-        enc_message = ''
-        for i in encoded_data:  # цикл для шифрования каждой буквы
-            enc_message += chr(i + key)  # создание закодированной строки
-        print(enc_message)
-        return enc_message
+    def encryptText(text, key):
+        keyraw = '{:032b}'.format(key)
+        fernet = Fernet(base64.urlsafe_b64encode(bytes(keyraw, encoding='utf8')))
+        encrypted = fernet.encrypt(text.encode())
+        return encrypted
 
-    # расшифровка текста
-    def decryptText(enc_message, key):
-        decr_message = ''
-        for i in enc_message:
-            decr_message += chr(ord(i) - key)  # дешифровка строки
-        decr_message_base64 = base64.b64decode(decr_message)  # перевод из base64
-        message = decr_message_base64.decode('utf-8')  # перевод из utf-8
-        print(message)
+    def decryptText(encrypted, key):
+        keyraw = '{:032b}'.format(key)
+        fernet = Fernet(base64.urlsafe_b64encode(bytes(keyraw, encoding='utf8')))
+        encrypted = fernet.decrypt(encrypted).decode("utf-8")
+        return encrypted
 
-
-    encrypted = ''
     # g = randint(1, 10)
     # p = randint(1, 10)
     #

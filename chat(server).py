@@ -26,8 +26,7 @@ def resend(user):
         data = user.recv(1024)
         for use in users:
             if use != user:
-                use.send(
-                    names[user] + " > ".encode('utf-8') + data)  # отправляет всем юзерам, кроме того кто это отправил
+                use.send(names[user] + " > ".encode('utf-8') + data)  # отправляет всем юзерам, кроме того кто это отправил
                 # use.send(data_gb)
 
 
