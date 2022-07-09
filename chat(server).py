@@ -1,12 +1,12 @@
-'''
+"""
 сервер принимает в себя отправлялки от клиента и отправляет их всем другим клиeнтам
-'''
+"""
 
 import socket
 from random import randint
 from subprocess import call
 from threading import Thread
-
+from encrypt_and_decrypt import *
 import keyboard
 
 
@@ -37,7 +37,7 @@ def start_server():
         print(f"User <{address[0]}> connected")
         user_socket.send(f"{g} {p}".encode())
         data_gb = user_socket.recv(1024)
-        print(data_gb)  # udalit
+
         user_socket.send(data_gb)
         names[user_socket] = user_socket.recv(256)  # имя пользователя
         users.append(user_socket)  # ip пользователя
@@ -45,7 +45,7 @@ def start_server():
 
 
 if __name__ == '__main__':
-    sock = socket.socket()
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     port = 8080
     server_host = "192.168.0.82"
     # server_host = socket.gethostname()

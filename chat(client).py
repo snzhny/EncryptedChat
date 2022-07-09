@@ -1,31 +1,29 @@
-'''
+"""
 могёт отправлять на сервер зашифрованные данные и имеет право на имя
-'''
+"""
 from random import randint, random
 from threading import Thread
 from keyboard import is_pressed as pressed
-# import encrypting
+from encrypt_and_decrypt import *
 import socket
 
 
 def send_message():
     while True:
         message = input("me > ")
-        if '!file' in message:
-            client_socket.send(message.encode('utf-8'))  # encrypting.intoBase64(message[5:]).encode('utf-8'))
+        encryptMessage = encryptText(message, key)
+        if '!file' in message: 
+            client_socket.send(encryptText(message, key).encode('utf-8'))  # encrypting.intoBase64(message[5:]).encode('utf-8'))
 
         else:
-            client_socket.send(message.encode('utf-8'))
+            client_socket.send(encryptMessage.encode('utf-8')) # позже поменяем для файла
 
 
 def receive_message():
     while True:
         data = client_socket.recv(1024).decode('utf-8')
-        print(data)
-
-
-def receive_public_keys():
-    pass
+        decryptedData = decryptText(data, key)
+        print(decryptedData)
 
 
 if __name__ == '__main__':
@@ -44,9 +42,6 @@ if __name__ == '__main__':
 
     key = gb ** a % p
     print(f"key: {key}")
-    print(g, p)
-    print(a)
-    print(ga)
     client_socket.send(name.encode('utf-8'))
     Thread(target=send_message).start()
     Thread(target=receive_message).start()
