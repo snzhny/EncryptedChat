@@ -47,17 +47,15 @@ def start_server():
 if __name__ == '__main__':
     sock = socket.socket()
     port = 8080
-    server_host = "192.168.0.82"  # socket.gethostname()
+    server_host = "192.168.0.82"
     # server_host = socket.gethostname()
     server_ip = socket.gethostbyname(server_host)
     print(f"IP of the server : {server_ip}")
     Thread(target=quit1).start()
     numberOfConnections = 2
     sock.bind((server_host, port))
-    g = randint(1, 10)
-    p = randint(1, 10)
-    # data_gb = user.recv(1024)
-    print(g, p)
+    g = randint(1, 10)  # for keys
+    p = randint(1, 10)  # for keys
     sock.listen(numberOfConnections)
     users = []
     names = {}  # usernames of clients

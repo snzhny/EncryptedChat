@@ -50,20 +50,20 @@ finally:
         print(message)
     
 
-    g = randint(1, 10)
-    p = randint(1, 10)
-
-    # A
-    a = randint(1, 10)
-    ga = (g ** a) % p
-
-    # B
-    b = randint(1, 10)
-    gb = (g ** b) % p
-
-    # KEYS
-    key_a = gb ** a % p
-    key_b = ga ** b % p
+    # g = randint(1, 10)
+    # p = randint(1, 10)
+    #
+    # # A
+    # a = randint(1, 10)
+    # ga = (g ** a) % p
+    #
+    # # B
+    # b = randint(1, 10)
+    # gb = (g ** b) % p
+    #
+    # # KEYS
+    # key_a = gb ** a % p
+    # key_b = ga ** b % p
 
     #
     # file_encode_b64 = intoBase64()
