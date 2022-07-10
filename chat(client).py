@@ -12,10 +12,10 @@ def send_message():
     while True:
         message = input("me > ")
         if '!file' in message:
-            client_socket.send(encryptText(message, key).encode('utf-8')) # encrypting.intoBase64(message[5:]).encode('utf-8'))
-
+            client_socket.send(encryptFile(message[6:], key))
         else:
-            client_socket.send(encryptText(message, key))  # позже поменяем для файла
+            client_socket.send(bytes(encryptText(message, key)))  # encrypting.intoBase64(message[5:]).encode('utf-8'))
+
 
 
 def receive_message():

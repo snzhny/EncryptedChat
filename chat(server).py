@@ -23,12 +23,14 @@ def quit1():
 
 def resend(user):
     while flag:
-        data = user.recv(1024)
+        try:
+            data = user.recv(1024)
+        except ConnectionResetError:
+            print(f"chel vishel")
+            break
         for use in users:
             if use != user:
                 use.send(names[user] + " > ".encode('utf-8') + data)  # отправляет всем юзерам, кроме того кто это отправил
-                # use.send(data_gb)
-
 
 def start_server():
     while flag:
