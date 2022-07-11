@@ -1,10 +1,6 @@
-"""
-могёт отправлять на сервер зашифрованные данные и имеет право на имя
-"""
 from random import randint, random
 from threading import Thread
-from keyboard import is_pressed as pressed
-from encrypt_and_decrypt import *
+from encrypting import *
 import socket
 
 
@@ -12,22 +8,30 @@ def send_message():
     while True:
         message = input("me > ")
         if '!file' in message:
+            client_socket.send('file'.encode('utf-8')) # указывает на то, что будет отправлен файл
             client_socket.send(encryptFile(message[6:], key))
         else:
-            client_socket.send(bytes(encryptText(message, key)))  # encrypting.intoBase64(message[5:]).encode('utf-8'))
+            client_socket.send('text'.encode('utf-8')) # указывает на то, что будет отправлен text
+            client_socket.send(encryptText(message, key))  # encrypting.intoBase64(message[5:]).encode('utf-8'))
 
 
 
 def receive_message():
     while True:
-        data = client_socket.recv(1024).decode('utf-8')
-        decryptedData = decryptText(data, key)
-        print(decryptedData)
+        type = client_socket.recv(100).decode('utf-8') # тип файла
+        data = client_socket.recv(4096)
+        name = client_socket.recv(256).decode('utf-8')
+        if type == 'file':
+            print(f"{name} > {decryptFile(data, key)}")
+        else:
+            decryptedData = decryptText(data, key)
+            print(f"{name} > {decryptedData}")
+
 
 
 if __name__ == '__main__':
     name = input('Enter your name: ')
-    server_host = input('Enter ip of server: ').strip()
+    server_host = '192.168.100.33'#input('Enter ip of server: ').strip()
     server_port = 8080
 
     client_socket = socket.socket()
