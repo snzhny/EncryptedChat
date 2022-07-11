@@ -1,12 +1,7 @@
-"""
-сервер принимает в себя отправлялки от клиента и отправляет их всем другим клиeнтам
-"""
-
 import socket
 from random import randint
 from subprocess import call
 from threading import Thread
-from encrypt_and_decrypt import *
 import keyboard
 
 
@@ -22,15 +17,19 @@ def quit1():
 
 
 def resend(user):
-    while flag:
+    while True:
         try:
-            data = user.recv(1024)
+            type = user.recv(100) # тип файла
+            data = user.recv(4096) # сам файл
         except ConnectionResetError:
             print(f"chel vishel")
             break
         for use in users:
             if use != user:
-                use.send(names[user] + " > ".encode('utf-8') + data)  # отправляет всем юзерам, кроме того кто это отправил
+                use.send(type)
+                use.send(data)
+                use.send(names[user]) # имя клиента
+           # отправляет всем юзерам, кроме того кто это отправил
 
 def start_server():
     while flag:
@@ -48,7 +47,7 @@ def start_server():
 if __name__ == '__main__':
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     port = 8080
-    server_host = "192.168.0.82"
+    server_host = "192.168.100.33"
     # server_host = socket.gethostname()
     server_ip = socket.gethostbyname(server_host)
     print(f"IP of the server : {server_ip}")
