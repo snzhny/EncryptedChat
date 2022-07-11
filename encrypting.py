@@ -10,22 +10,19 @@ except ModuleNotFoundError:
 finally:
     # base64 encryption
     def encryptFile(path : str, key : int) -> bytes:
-        with open(path, 'rb') as file:
-            file_encode_b64 = base64.b64encode(file.read())
         keyraw = '{:032b}'.format(key)
         fernet = Fernet(base64.urlsafe_b64encode(bytes(keyraw, encoding='utf8')))
-        encrypted = fernet.encrypt(file_encode_b64)
-        # print(encrypted) # это мы отправляем челу
+        with open(path, 'rb') as file:
+            encrypted = fernet.encrypt(file.read())
         return encrypted
 
     # base64 decryption
-    def decryptFile(encrypted, key):
+    def decryptFile(encrypted : bytes, key : int) -> None:
         keyraw = '{:032b}'.format(int(key))
         fernet = Fernet(base64.urlsafe_b64encode(bytes(keyraw, encoding='utf-8')))
         decrypted = fernet.decrypt(encrypted)
-
-        with open("D:\\de.txt", 'wb') as file:
-            file.write(base64.b64decode(decrypted))
+        with open("D:\\de.jpg", 'wb') as file:
+            file.write(decrypted)
 
         return f'file on D:\\de.txt'
 
