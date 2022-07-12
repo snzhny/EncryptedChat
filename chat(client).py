@@ -18,7 +18,7 @@ def send_message():
             i = 0
             for i in range(len(encrypted_text) // 1024):                
                 client_socket.send(encrypted_text[i*1024:(i+1)*1024]) # отправляет файл чистично(по 1024 кБ)
-            client_socket.send(encrypted_text[-1024:] + 'text!StOp!'.encode('utf-8')) 
+            client_socket.send(encrypted_text[-1024:] + 'text!StOp!'.encode('utf-8'))
 
             
     
