@@ -13,7 +13,7 @@ def quit1():
             Thread(target=start_server, args=(userik,)).join()
             Thread(target=resend, args=(userik,)).join()
         sock.close()
-        quit() 
+        quit()
 
 
 def resend(user):

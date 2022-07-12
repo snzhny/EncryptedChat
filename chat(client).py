@@ -1,7 +1,5 @@
-from http import client
 from random import randint, random
 from threading import Thread
-from tracemalloc import stop
 from encrypting import *
 import socket
 
@@ -23,12 +21,7 @@ def send_message():
             client_socket.send(encrypted_text[-1024:] + 'text!StOp!'.encode('utf-8')) 
 
             
-            
-            # client_socket.send('text'.encode('utf-8')) # указывает на то, что будет отправлен text
-            # client_socket.send(encryptText(message, key) + '!StOp!text'.encode('utf-8'))  # encrypting.intoBase64(message[5:]).encode('utf-8'))
-
-
-
+    
 def receive_message():
     while True:
         data = ''
