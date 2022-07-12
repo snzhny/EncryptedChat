@@ -9,7 +9,6 @@ def quit1():
     if not keyboard.wait('Esc'):
         print(5675454)
         flag = False
-        # sock.shutdown(socket.SHUT_RDWR)
         for userik in users:
             Thread(target=resend, args=(userik,)).join()
         quit()
@@ -19,16 +18,19 @@ def quit1():
 def resend(user):
     while True:
         try:
-            type = user.recv(100) # тип файла
-            data = user.recv(4096) # сам файл
+            data = ''.encode('utf-8')
+            count = 0
+            while '!StOp!'.encode('utf-8') != data[-6:]: # пока не найдет стоп-слово будет принимать данные
+                data += user.recv(1024)
+                count += 1
         except ConnectionResetError:
             print(f"chel vishel")
             break
+        str = names[user] + '`!~!`'.encode('utf-8') + data # стоп-слово, которое отделяет имя от данных
         for use in users:
             if use != user:
-                use.send(type)
-                use.send(data)
-                use.send(names[user]) # имя клиента
+                for i in range(count+1):
+                    use.send(str[i*1024:(i+1)*1024]) # отправляет файл чистично(по 1024 кБ)
            # отправляет всем юзерам, кроме того кто это отправил
 
 def start_server():
