@@ -14,7 +14,6 @@ def quit1():
             Thread(target=resend, args=(userik,)).join()
         sock.close()
         quit()
-        call("exit")
 
 
 def resend(user):
