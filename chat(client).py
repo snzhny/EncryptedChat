@@ -17,7 +17,6 @@ def send_message():
             client_socket.send(encrypted_file[-1024:] + 'file!StOp!'.encode('utf-8')) 
         else:
             encrypted_text = encryptText(message, key)
-            print(encrypted_text)
             i = 0
             for i in range(len(encrypted_text) // 1024):                
                 client_socket.send(encrypted_text[i*1024:(i+1)*1024]) # отправляет файл чистично(по 1024 кБ)
@@ -41,7 +40,6 @@ def receive_message():
         data = data.replace('`!~!`', '') # удаление стоп-символа
         type = data[-10:-6] # тип данных
         data = data[:-10]
-        # print(data)
         if type == 'file':
             print(f"{name} > {decryptFile(data.encode('utf-8'), key)}")
         else:
