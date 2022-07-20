@@ -2,6 +2,7 @@ try:
     from cryptography.fernet import Fernet
     from random import randint
     import base64
+    from pathlib import Path
 except ModuleNotFoundError:
     from subprocess import call
 
@@ -9,7 +10,7 @@ except ModuleNotFoundError:
     call("pip install " + ' '.join(modules), shell=True)
 finally:
     # base64 encryption
-    def encryptFile(path : str, key : int) -> bytes:
+    def encryptFile(path : str, key: int) -> bytes:
         keyraw = '{:032b}'.format(key)
         fernet = Fernet(base64.urlsafe_b64encode(bytes(keyraw, encoding='utf8')))
         with open(path, 'rb') as file:
@@ -17,22 +18,23 @@ finally:
         return encrypted
 
     # base64 decryption
-    def decryptFile(encrypted : bytes, key : int) -> None:
+    def decryptFile(encrypted: bytes, key: int, filepath: str) -> str:
         keyraw = '{:032b}'.format(int(key))
         fernet = Fernet(base64.urlsafe_b64encode(bytes(keyraw, encoding='utf-8')))
         decrypted = fernet.decrypt(encrypted)
-        with open("D:\\de.jpg", 'wb') as file:
+        with open(f"{filepath}de.txt", 'wb') as file:
             file.write(decrypted)
 
-        return f'file on D:\\de.txt'
+        return f'file on {Path(str(file))}'
 
-    # шифровка текста
+    # text encryption
     def encryptText(text : str, key : int) -> bytes :
         keyraw = '{:032b}'.format(key)
         fernet = Fernet(base64.urlsafe_b64encode(bytes(keyraw, encoding='utf8')))
         encrypted = fernet.encrypt(text.encode('utf-8'))
         return encrypted
 
+    #text decryption
     def decryptText(encrypted : bytes, key : int) -> str:
         keyraw = '{:032b}'.format(key)
         fernet = Fernet(base64.urlsafe_b64encode(bytes(keyraw, encoding='utf8')))
