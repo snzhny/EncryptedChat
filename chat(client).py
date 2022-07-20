@@ -1,61 +1,77 @@
-from random import randint, random
 from threading import Thread
 from encrypting import *
 import socket
-
+from os import system
+import os
 
 def send_message():
+    global history
+    global filePath
+
+    filePath = str(input("Where to save all coming files(path)?: "))
+
+    print('me > ', end='')
     while True:
-        message = input("me > ")
+        message = input()
+        history += 'me > ' + message + '\n'
+
         if '!file' in message:
             encrypted_file = encryptFile(message[6:], key)
-            i = 0
             for i in range(len(encrypted_file) // 1024):
-                client_socket.send(encrypted_file[i*1024:(i+1)*1024]) # отправляет файл чистично(по 1024 кБ)
-            client_socket.send(encrypted_file[-1024:] + 'file!StOp!'.encode('utf-8')) 
+                client_socket.send(encrypted_file[i * 1024:(i + 1) * 1024])  # partially sends a file(1024 kb)
+            client_socket.send(encrypted_file[-1024:] + 'file!StOp!'.encode('utf-8'))
         else:
             encrypted_text = encryptText(message, key)
-            i = 0
-            for i in range(len(encrypted_text) // 1024):                
-                client_socket.send(encrypted_text[i*1024:(i+1)*1024]) # отправляет файл чистично(по 1024 кБ)
+            for i in range(len(encrypted_text) // 1024):
+                client_socket.send(encrypted_text[i * 1024:(i + 1) * 1024])  # partially sends a text(1024 kb)
             client_socket.send(encrypted_text[-1024:] + 'text!StOp!'.encode('utf-8'))
+        system('cls')
+        print(history)
+        print('me > ', end='')
 
-            
-    
+
 def receive_message():
+    global history
     while True:
         data = ''
-        while '!StOp!' != data[-6:]: # пока не найдет стоп-слово будет принимать данные
-            data += client_socket.recv(1024).decode('utf-8')
-        stop_symb_name = data.find('`!~!`') # стоп для отделения имени
+        while '!StOp!' != data[-6:]:  # until it finds a stop word it will accept data
+            try:
+                data += client_socket.recv(1024).decode('utf-8')
+            except ConnectionResetError:
+                print("PIZDEC")
+        stop_symb_name = data.find('!~!')  # stop to separate name
         name = data[:stop_symb_name]
-        data = data[stop_symb_name:] # удаление имени из строки
-        data = data.replace('`!~!`', '') # удаление стоп-символа
-        type = data[-10:-6] # тип данных
+        data = data[stop_symb_name:]  # removing a name from a string
+        data = data.replace('!~!', '')  # remove stop-symbol
+        dataType = data[-10:-6]
         data = data[:-10]
-        if type == 'file':
-            print(f"{name} > {decryptFile(data.encode('utf-8'), key)}")
+
+        if dataType == 'file':
+            history += f"{name} > {decryptFile(data.encode('utf-8'), key, filePath)}" + '\n'
         else:
-            print(f"{name} > {decryptText(data.encode('utf-8'), key)}")
+            history += f"{name} > {decryptText(data.encode('utf-8'), key)}" + '\n'
+        system('cls')
+        print("Chat started...")
+        print(f"{history}me > ", end='')
 
 
-
+history = ''
 if __name__ == '__main__':
     name = input('Enter your name: ')
-    server_host = '192.168.100.33'#input('Enter ip of server: ').strip()
+    server_host = input('Enter ip of server: ').strip()
     server_port = 8080
 
     client_socket = socket.socket()
     client_socket.connect((server_host, server_port))
-    g, p = (int(x) for x in (client_socket.recv(1024).decode('utf-8')).split())
-    a = randint(1, 10)
-    ga = (g ** a) % p  # наш остаток
-    client_socket.send(str(ga).encode())
-
-    gb = int((client_socket.recv(1024)).decode())  # получение чужого остатка
-
-    key = gb ** a % p
-    print(f"key: {key}")
     client_socket.send(name.encode('utf-8'))
+
+    g, p = (int(x) for x in (client_socket.recv(1024).decode('utf-8')).split())
+    a = randint(1000, 1000000)
+    ga = pow(g, a, p)
+    client_socket.send(str(ga).encode())
+    gb = int((client_socket.recv(1024)).decode())
+    key = pow(gb, a, p)  # private key
+
     Thread(target=send_message).start()
     Thread(target=receive_message).start()
+
