@@ -35,10 +35,7 @@ def receive_message():
     while True:
         data = ''
         while '!StOp!' != data[-6:]:  # until it finds a stop word it will accept data
-            try:
-                data += client_socket.recv(1024).decode('utf-8')
-            except ConnectionResetError:
-                print("PIZDEC")
+            data += client_socket.recv(1024).decode('utf-8')
         stop_symb_name = data.find('!~!')  # stop to separate name
         name = data[:stop_symb_name]
         data = data[stop_symb_name:]  # removing a name from a string
