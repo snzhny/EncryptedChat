@@ -16,10 +16,13 @@ def send_message():
         history += 'me > ' + message + '\n'
 
         if '!file' in message:
+            num = message.rfind('\\')+1#номер знака в строке с путём файла для нахождения названия передаваемого файла
+            fileType = message[num:]#копирование в строку название передаваемого файла
+
             encrypted_file = encryptFile(message[6:], key)
             for i in range(len(encrypted_file) // 1024):
                 client_socket.send(encrypted_file[i * 1024:(i + 1) * 1024])  # partially sends a file(1024 kb)
-            client_socket.send(encrypted_file[-1024:] + 'file!StOp!'.encode('utf-8'))
+            client_socket.send(encrypted_file[-1024:] + fileType.encode('utf-8') + 'file!StOp!'.encode('utf-8'))
         else:
             encrypted_text = encryptText(message, key)
             for i in range(len(encrypted_text) // 1024):
@@ -34,8 +37,10 @@ def receive_message():
     global history
     while True:
         data = ''
+        fileType = ''
         while '!StOp!' != data[-6:]:  # until it finds a stop word it will accept data
             data += client_socket.recv(1024).decode('utf-8')
+        fileType=data[data.find('==')+2:data.find('file!StOp!')]#получение название и тип файла
         stop_symb_name = data.find('!~!')  # stop to separate name
         name = data[:stop_symb_name]
         data = data[stop_symb_name:]  # removing a name from a string
@@ -44,7 +49,7 @@ def receive_message():
         data = data[:-10]
 
         if dataType == 'file':
-            history += f"{name} > {decryptFile(data.encode('utf-8'), key, filePath)}" + '\n'
+            history += f"{name} > {decryptFile(data.encode('utf-8'), key, filePath, fileType)}" + '\n'
         else:
             history += f"{name} > {decryptText(data.encode('utf-8'), key)}" + '\n'
         system('cls')

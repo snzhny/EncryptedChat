@@ -18,11 +18,11 @@ finally:
         return encrypted
 
     # base64 decryption
-    def decryptFile(encrypted: bytes, key: int, filepath: str) -> str:
+    def decryptFile(encrypted: bytes, key: int, filepath: str, filetype: str) -> str:
         keyraw = '{:032b}'.format(int(key))
         fernet = Fernet(base64.urlsafe_b64encode(bytes(keyraw, encoding='utf-8')))
         decrypted = fernet.decrypt(encrypted)
-        with open(f"{filepath}de.txt", 'wb') as file:
+        with open(f"{filepath}{filetype}", 'wb') as file:
             file.write(decrypted)
 
         return f'file on {Path(str(file))}'
