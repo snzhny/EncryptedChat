@@ -21,7 +21,7 @@ def resend(user):
                 data += user.recv(1024)
                 count += 1
         except ConnectionResetError:
-            print(f"{names[user].decode()} vishel")
+            print(f"{names[user].decode()} came out")
             users.remove(user)
             del names[user]
             break
