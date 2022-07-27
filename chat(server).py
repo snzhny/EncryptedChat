@@ -61,7 +61,8 @@ def start_server():
 if __name__ == '__main__':
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     port = 8080
-    server_host = "192.168.1.6"
+    server_host = ''  # ENTER SERVER IP ADDRESS
+
     print(f"IP of the server : {server_host}")
     Thread(target=quit1).start()
     numberOfConnections = 3

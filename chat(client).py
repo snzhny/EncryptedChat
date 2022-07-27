@@ -16,8 +16,8 @@ def send_message():
         history += 'me > ' + message + '\n'
 
         if '!file' in message:
-            num = message.rfind('\\')+1#номер знака в строке с путём файла для нахождения названия передаваемого файла
-            fileType = message[num:]#копирование в строку название передаваемого файла
+            num = message.rfind('\\')+1
+            fileType = message[num:]
 
             encrypted_file = encryptFile(message[6:], key)
             for i in range(len(encrypted_file) // 1024):
@@ -40,7 +40,7 @@ def receive_message():
         fileType = ''
         while '!StOp!' != data[-6:]:  # until it finds a stop word it will accept data
             data += client_socket.recv(1024).decode('utf-8')
-        fileType=data[data.find(' _ ')+3:-10]#получение название и тип файла
+        fileType=data[data.find(' _ ')+3:-10]
         stop_symb_name = data.find('!~!')  # stop to separate name
         name = data[:stop_symb_name]
         data = data[stop_symb_name:]  # removing a name from a string
@@ -60,7 +60,7 @@ def receive_message():
 history = ''
 if __name__ == '__main__':
     name = input('Enter your name: ')
-    server_host = '192.168.1.6'#input('Enter ip of server: ').strip()
+    server_host = input('Enter ip of server: ').strip()
     server_port = 8080
 
     client_socket = socket.socket()
